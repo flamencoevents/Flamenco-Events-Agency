@@ -1,0 +1,46 @@
+name: Import validated English website
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/import-english-site.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  import-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout new international repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Fetch validated English staging source
+        run: |
+          git clone --depth 1 --branch international-staging \
+            https://github.com/flamencoevents/Flamenco-Events-app.git /tmp/agency-source
+      - name: Copy only the public marketing website
+        run: |
+          set -eu
+          for name in index.html eventos-exclusivos.html suite-flamenca.html son-del-alma.html guitarrista-flamenco.html robots.txt validate_international.py; do
+            cp "/tmp/agency-source/$name" "$name"
+          done
+          cp -R /tmp/agency-source/assets ./assets
+          touch .nojekyll
+          test ! -f CNAME
+          test ! -e portal.html
+          test ! -e admin.html
+          test ! -e supabase
+      - name: Verify links, images and indexing lock
+        run: python3 validate_international.py
+      - name: Commit verified website
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html eventos-exclusivos.html suite-flamenca.html son-del-alma.html guitarrista-flamenco.html assets robots.txt .nojekyll validate_international.py
+          if ! git diff --cached --quiet; then
+            git commit -m "Import validated English Agency website and media"
+            git push origin HEAD:main
+          fi
