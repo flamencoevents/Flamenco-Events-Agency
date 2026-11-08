@@ -1,0 +1,57 @@
+name: Publish English staging website
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "index.html"
+      - "suite-flamenca.html"
+      - "son-del-alma.html"
+      - "guitarrista-flamenco.html"
+      - "eventos-exclusivos.html"
+      - "assets/**"
+      - "robots.txt"
+      - "validate_international.py"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "international-pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate preview safety and links
+        run: python3 validate_international.py
+      - name: Build isolated public files only
+        run: |
+          mkdir -p _site
+          cp index.html suite-flamenca.html son-del-alma.html guitarrista-flamenco.html eventos-exclusivos.html robots.txt .nojekyll _site/
+          cp -R assets _site/assets
+          test ! -f _site/CNAME
+          test ! -e _site/portal.html
+          test ! -e _site/admin.html
+          test ! -e _site/supabase
+          grep -q 'noindex,nofollow' _site/index.html
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy staging site
+        id: deployment
+        uses: actions/deploy-pages@v4
