@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parent
-PAGES = ("index.html", "eventos-exclusivos.html", "suite-flamenca.html", "son-del-alma.html", "guitarrista-flamenco.html", "luxury-flamenco-weddings-marbella.html", "flamenco-weddings-seville.html", "destination-weddings-andalusia.html")
+PAGES = ("index.html", "eventos-exclusivos.html", "suite-flamenca.html", "son-del-alma.html", "guitarrista-flamenco.html", "luxury-flamenco-weddings-marbella.html", "flamenco-weddings-seville.html", "destination-weddings-andalusia.html", "preguntas-frecuentes.html")
 
 class Page(HTMLParser):
     def __init__(self):
@@ -64,7 +64,7 @@ def check(root: Path) -> None:
     if errors:
         print("\n".join(errors), file=sys.stderr)
         raise SystemExit(1)
-    print("PASS: 8 public pages, sitemap, indexing, links and private-app isolation")
+    print("PASS: 9 public pages, sitemap, indexing, links and private-app isolation")
 
 if __name__ == "__main__":
     check(ROOT)
