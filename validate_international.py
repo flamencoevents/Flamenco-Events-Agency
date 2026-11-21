@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parent
-PAGES = ("index.html", "eventos-exclusivos.html", "suite-flamenca.html", "son-del-alma.html", "guitarrista-flamenco.html")
+PAGES = ("index.html", "eventos-exclusivos.html", "suite-flamenca.html", "son-del-alma.html", "guitarrista-flamenco.html", "luxury-flamenco-weddings-marbella.html", "flamenco-weddings-seville.html", "destination-weddings-andalusia.html")
 
 class Page(HTMLParser):
     def __init__(self):
@@ -36,7 +36,7 @@ def check(root: Path) -> None:
         html = path.read_text(encoding="utf-8")
         page = Page()
         page.feed(html)
-        for marker in ('<html lang="en">', 'noindex,nofollow', 'id="main-content"', 'class="skip"'):
+        for marker in ('<html lang="en">', 'index,follow', 'id="main-content"', 'class="skip"'):
             if marker not in html:
                 errors.append(f"{name}: missing required marker {marker}")
         if "../portal.html" in html or "supabase" in html.lower():
@@ -52,16 +52,19 @@ def check(root: Path) -> None:
         for im in page.images:
             if not im.get("alt"):
                 errors.append(f"{name}: missing image alt")
-        if not any(link.get("href") == name and link.get("aria-current") == "page" for link in page.links):
+        if name in PAGES[:5] and not any(link.get("href") == name and link.get("aria-current") == "page" for link in page.links):
             errors.append(f"{name}: no active navigation item")
     if (root / "CNAME").exists():
         errors.append("Custom domain must not be attached before registration")
-    if (root / "robots.txt").read_text(encoding="utf-8") != "User-agent: *\nDisallow: /\n":
-        errors.append("robots.txt must block preview indexing")
+    robots = (root / "robots.txt").read_text(encoding="utf-8")
+    if "OAI-SearchBot" not in robots or "Allow: /" not in robots or "Disallow: /\n" in robots:
+        errors.append("robots.txt must allow crawling of public pages")
+    if not (root / "sitemap.xml").is_file():
+        errors.append("Missing sitemap.xml")
     if errors:
         print("\n".join(errors), file=sys.stderr)
         raise SystemExit(1)
-    print("PASS: 5 pages, link references, accessibility markers, and launch safety checks")
+    print("PASS: 8 public pages, sitemap, indexing, links and private-app isolation")
 
 if __name__ == "__main__":
     check(ROOT)
