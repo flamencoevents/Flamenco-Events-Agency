@@ -10,6 +10,10 @@ on:
       - "son-del-alma.html"
       - "guitarrista-flamenco.html"
       - "eventos-exclusivos.html"
+      - "luxury-flamenco-weddings-marbella.html"
+      - "flamenco-weddings-seville.html"
+      - "destination-weddings-andalusia.html"
+      - "sitemap.xml"
       - "assets/**"
       - "robots.txt"
       - "validate_international.py"
@@ -39,13 +43,15 @@ jobs:
       - name: Build isolated public files only
         run: |
           mkdir -p _site
-          cp index.html suite-flamenca.html son-del-alma.html guitarrista-flamenco.html eventos-exclusivos.html robots.txt .nojekyll _site/
+          cp index.html suite-flamenca.html son-del-alma.html guitarrista-flamenco.html eventos-exclusivos.html luxury-flamenco-weddings-marbella.html flamenco-weddings-seville.html destination-weddings-andalusia.html robots.txt sitemap.xml .nojekyll _site/
           cp -R assets _site/assets
           test ! -f _site/CNAME
           test ! -e _site/portal.html
           test ! -e _site/admin.html
           test ! -e _site/supabase
-          grep -q 'noindex,nofollow' _site/index.html
+          grep -q 'index,follow' _site/index.html
+          test -f _site/sitemap.xml
+          grep -q 'OAI-SearchBot' _site/robots.txt
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
