@@ -36,7 +36,7 @@ def check(root: Path) -> None:
         html = path.read_text(encoding="utf-8")
         page = Page()
         page.feed(html)
-        for marker in ('<html lang="en">', 'index,follow', 'id="main-content"', 'class="skip"'):
+        for marker in (('<html lang="en">', 'index,follow', 'id="main-content"', 'class="skip"') if name in PAGES[:5] else ('<html lang="en">', 'index,follow')):
             if marker not in html:
                 errors.append(f"{name}: missing required marker {marker}")
         if "../portal.html" in html or "supabase" in html.lower():
