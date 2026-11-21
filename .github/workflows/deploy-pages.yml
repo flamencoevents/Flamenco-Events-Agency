@@ -13,6 +13,7 @@ on:
       - "luxury-flamenco-weddings-marbella.html"
       - "flamenco-weddings-seville.html"
       - "destination-weddings-andalusia.html"
+      - "preguntas-frecuentes.html"
       - "sitemap.xml"
       - "assets/**"
       - "robots.txt"
@@ -43,7 +44,7 @@ jobs:
       - name: Build isolated public files only
         run: |
           mkdir -p _site
-          cp index.html suite-flamenca.html son-del-alma.html guitarrista-flamenco.html eventos-exclusivos.html luxury-flamenco-weddings-marbella.html flamenco-weddings-seville.html destination-weddings-andalusia.html robots.txt sitemap.xml .nojekyll _site/
+          cp index.html suite-flamenca.html son-del-alma.html guitarrista-flamenco.html eventos-exclusivos.html luxury-flamenco-weddings-marbella.html flamenco-weddings-seville.html destination-weddings-andalusia.html preguntas-frecuentes.html robots.txt sitemap.xml .nojekyll _site/
           cp -R assets _site/assets
           test ! -f _site/CNAME
           test ! -e _site/portal.html
